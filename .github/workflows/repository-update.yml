@@ -69,7 +69,7 @@ jobs:
         run: |
           
           SERVER="${{ matrix.node }}"
-          if curl -s --head  --request GET https://${SERVER%/*} | grep "200 OK" > /dev/null; then 
+          if curl -s --head  --request GET http://${SERVER%/*} | grep "200 OK" > /dev/null; then 
           echo "mysite.com is UP"
           else
           echo "mysite.com is DOWN"
