@@ -48,7 +48,7 @@ jobs:
             servers:
           EOF
           
-            echo "<pre>$variant</pre>" >> $GITHUB_STEP_SUMMARY
+            echo "<pre>$variant" >> $GITHUB_STEP_SUMMARY
             SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
             "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=$variant" \
             | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
@@ -73,13 +73,14 @@ jobs:
             done
           done
                 
-#          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
-#          [[ -n $DL_PATH ]] && DL_PATH="$variant"
-#          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
-#          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
-#          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
-#          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
-              
+          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
+          [[ -n $DL_PATH ]] && DL_PATH="$variant"
+          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
+          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
+          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
+          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
+          cat dlrouter-${variant}.yaml >> $GITHUB_STEP_SUMMARY
+          echo "</pre>" >> $GITHUB_STEP_SUMMARY
 
 #      - uses: actions/upload-artifact@v3
 #        with:
