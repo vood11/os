@@ -92,7 +92,7 @@ jobs:
                 fi
                 
           [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant%:*}.yaml
-          [[ -n $DL_PATH ]] && DL_PATH="$variant"
+          [[ -n $DL_PATH ]] && DL_PATH="${variant%:*}"
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant%:*}.yaml"
           [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant%:*}.yaml
           [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant%:*}.yaml
