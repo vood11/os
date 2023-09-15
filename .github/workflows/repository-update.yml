@@ -69,15 +69,15 @@ jobs:
           PHYSICAL=$(echo $COMMAND | jq '.results[] | .physical_address' | sed "s/\"//g")
           UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
           fi
-          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
-          [[ -n $DL_PATH ]] && DL_PATH="$variant"
-          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
-          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
-          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
-          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
+#          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
+#          [[ -n $DL_PATH ]] && DL_PATH="$variant"
+#          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
+#          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
+#          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
+#          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
           done
           done
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: redirecor-config
+#      - uses: actions/upload-artifact@v3
+#        with:
+#          name: redirecor-config
