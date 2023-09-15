@@ -46,7 +46,7 @@ jobs:
           for variant in "${VARIANT[@]}"; do
             cat <<- EOF > dlrouter-${variant}.yaml
             servers:
-            EOF
+          EOF
           
             echo "<pre>$variant</pre>" >> $GITHUB_STEP_SUMMARY
             SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
