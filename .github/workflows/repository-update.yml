@@ -91,10 +91,10 @@ jobs:
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
           [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
           [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
-          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
-          cat dlrouter-${variant}.yaml >> $GITHUB_STEP_SUMMARY          
+          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml          
             done
-            echo "</pre>" >> $GITHUB_STEP_SUMMARY
+            cat dlrouter-${variant}.yaml >> $GITHUB_STEP_SUMMARY
+            echo "</pre>" >> $GITHUB_STEP_SUMMARY            
           done
 
 
