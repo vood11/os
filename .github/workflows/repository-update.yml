@@ -54,7 +54,7 @@ jobs:
     runs-on: Linux
     needs: Test
     outputs:
-      matrix: ${{needs.Prepare.outputs.matrix}}
+      matrix: ${{needs.test.outputs.matrix}}
     if: ${{ needs.Test.outputs.matrix != '[]' && needs.Test.outputs.matrix != '' }}
     timeout-minutes: 60
     strategy:
@@ -62,7 +62,7 @@ jobs:
       fail-fast: false
       matrix:
 
-        node: ${{fromJson(needs.Prepare.outputs.matrix)}}
+        node: ${{fromJson(needs.Test.outputs.matrix)}}
 
     steps:
 
