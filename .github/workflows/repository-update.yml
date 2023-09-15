@@ -44,39 +44,42 @@ jobs:
           #VARIANT=(archive debs debs-beta images rsync)
           VARIANT=(archive)
           for variant in "${VARIANT[@]}"; do
-          cat <<- EOF > dlrouter-${variant}.yaml
-          servers:
-          EOF
-          echo "<pre>$variant</pre>" >> $GITHUB_STEP_SUMMARY
-          SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
-          "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=$variant" \
-          | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
-
-          for server in "${SERVERS[@]}"; do
-          unset REGION LATITUDE LONGITUDE
-          COMMAND=$(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
-          "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&name=$server" | jq)
+            cat <<- EOF > dlrouter-${variant}.yaml
+            servers:
+            EOF
           
-          DL_PATH=$(echo $COMMAND | jq '.results[] | .custom_fields["download_path"]' | sed "s/\"//g")
-          WEIGHT=$(echo $COMMAND | jq '.results[] | .custom_fields["weight"]' | head -1 | sed "s/\"//g")
-          SITE_ID=$(echo $COMMAND | jq '.results[] | .site.id' | sed "s/\"//g")
-          if [[ $SITE_ID != null ]]; then
-          COMMAND=$(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
-          "https://stuff.armbian.com/netbox/api/dcim/sites/?limit=500&id=$SITE_ID" | jq)
-          REGION=$(echo $COMMAND | jq '.results[] | .region.name' | sed "s/\"//g")
-          LATITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
-          LONGITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
-          PHYSICAL=$(echo $COMMAND | jq '.results[] | .physical_address' | sed "s/\"//g")
-          UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
-          fi
+            echo "<pre>$variant</pre>" >> $GITHUB_STEP_SUMMARY
+            SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
+            "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=$variant" \
+            | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
+
+              for server in "${SERVERS[@]}"; do
+                unset REGION LATITUDE LONGITUDE
+                COMMAND=$(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
+                "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&name=$server" | jq)
+          
+                DL_PATH=$(echo $COMMAND | jq '.results[] | .custom_fields["download_path"]' | sed "s/\"//g")
+                WEIGHT=$(echo $COMMAND | jq '.results[] | .custom_fields["weight"]' | head -1 | sed "s/\"//g")
+                SITE_ID=$(echo $COMMAND | jq '.results[] | .site.id' | sed "s/\"//g")
+                if [[ $SITE_ID != null ]]; then
+                  COMMAND=$(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
+                  "https://stuff.armbian.com/netbox/api/dcim/sites/?limit=500&id=$SITE_ID" | jq)
+                  REGION=$(echo $COMMAND | jq '.results[] | .region.name' | sed "s/\"//g")
+                  LATITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
+                  LONGITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
+                  PHYSICAL=$(echo $COMMAND | jq '.results[] | .physical_address' | sed "s/\"//g")
+                  UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
+                fi
+            done
+          done
+                
 #          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
 #          [[ -n $DL_PATH ]] && DL_PATH="$variant"
 #          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
 #          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
 #          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
 #          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
-          done
-          done
+              
 
 #      - uses: actions/upload-artifact@v3
 #        with:
