@@ -41,17 +41,15 @@ jobs:
       - name: Get primary mirrors from database
         run: |
 
-          #VARIANT=(archive debs debs-beta images rsync)
-          VARIANT=(archive)
+          VARIANT=(archive debs debs-beta images rsync)
+          #VARIANT=(archive)
           for variant in "${VARIANT[@]}"; do
             cat <<- EOF > dlrouter-${variant}.yaml
             servers:
           EOF
-          
-            echo "<pre>$variant" >> $GITHUB_STEP_SUMMARY
+            echo "<pre># $variant" >> $GITHUB_STEP_SUMMARY
             SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
-            "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=$variant" \
-            | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
+            "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=$variant" | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
 
               for server in "${SERVERS[@]}"; do
                 unset REGION LATITUDE LONGITUDE
@@ -70,8 +68,6 @@ jobs:
                   PHYSICAL=$(echo $COMMAND | jq '.results[] | .physical_address' | sed "s/\"//g")
                   UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
                 fi
-            done
-          done
                 
           [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
           [[ -n $DL_PATH ]] && DL_PATH="$variant"
@@ -81,6 +77,9 @@ jobs:
           [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
           cat dlrouter-${variant}.yaml >> $GITHUB_STEP_SUMMARY
           echo "</pre>" >> $GITHUB_STEP_SUMMARY
+            done
+          done
+
 
       - uses: actions/upload-artifact@v3
         with:
