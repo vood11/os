@@ -41,10 +41,10 @@ jobs:
       - name: Get primary mirrors from database
         run: |
 
-          VARIANT=(archive debs debs-beta images rsync)
+          #VARIANT=(archive debs debs-beta images rsync)
           VARIANT=(archive)
           for variant in "${VARIANT[@]}"; do
-          cat <<- EOF > "dlrouter-${variant}.yaml"
+          cat <<- EOF > dlrouter-${variant}.yaml
           servers:
           EOF
           echo "<pre>$variant</pre>" >> $GITHUB_STEP_SUMMARY
@@ -69,12 +69,12 @@ jobs:
           PHYSICAL=$(echo $COMMAND | jq '.results[] | .physical_address' | sed "s/\"//g")
           UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
           fi
-          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> "dlrouter-${variant}.yaml"
+          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
           [[ -n $DL_PATH ]] && DL_PATH="$variant"
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
-          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> "dlrouter-${variant}.yaml"
-          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> "dlrouter-${variant}.yaml"
-          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> "dlrouter-${variant}.yaml"
+          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
+          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
+          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml
           done
           done
 
