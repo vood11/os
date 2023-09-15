@@ -65,7 +65,7 @@ jobs:
           EOF
             echo "<pre># $variant" >> $GITHUB_STEP_SUMMARY
             SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
-            "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=$variant" | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
+            "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=${variant%:*}" | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
 
               for server in "${SERVERS[@]}"; do
                 unset REGION LATITUDE LONGITUDE
