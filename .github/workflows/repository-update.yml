@@ -41,14 +41,13 @@ jobs:
       - name: Get primary mirrors from database
         run: |
 
-          VARIANT=(archive debs debs-beta images rsync)
-          #VARIANT=(archive)
+          VARIANT=(archive:8082 debs:80 debs-beta:8083 images:8081 rsync:8084 content:8100)
           for variant in "${VARIANT[@]}"; do
-          cat <<- EOF > dlrouter-${variant}.yaml
+          cat <<- EOF > dlrouter-${variant%:*}.yaml
           geodb: /scripts/redirect-config/GeoLite2-City.mmdb
           asndb: /scripts/redirect-config/GeoLite2-ASN.mmdb
           dl_map: /scripts/redirect-config/userdata.csv
-          bind: ':8081'
+          bind: ':${variant##*:}'
           
           # Reload authorization key
           reloadKey: NLnC4QNF862QumEpt7zwVPZAEvqAz6cZ
@@ -86,14 +85,14 @@ jobs:
                   UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
                 fi
                 
-          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant}.yaml
+          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant%:*}.yaml
           [[ -n $DL_PATH ]] && DL_PATH="$variant"
-          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant}.yaml"
-          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant}.yaml
-          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant}.yaml
-          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant}.yaml          
+          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant%:*}.yaml"
+          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant%:*}.yaml
+          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant%:*}.yaml
+          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant%:*}.yaml          
             done
-            cat dlrouter-${variant}.yaml >> $GITHUB_STEP_SUMMARY
+            cat dlrouter-${variant%:*}.yaml >> $GITHUB_STEP_SUMMARY
             echo "</pre>" >> $GITHUB_STEP_SUMMARY            
           done
 
