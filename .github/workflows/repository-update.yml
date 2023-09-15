@@ -33,7 +33,7 @@ jobs:
 
 
   Prepare:
-    name: "Upload to servers"
+    name: "Generate YAML for re-director"
     needs: Check
     runs-on: Linux
     steps:
