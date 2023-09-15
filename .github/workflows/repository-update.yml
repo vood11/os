@@ -68,7 +68,7 @@ jobs:
       - name: Ping
         run: |
           
-          echo "${{ matrix.node }}"
+          ping -c10 "${{ matrix.node }}"
 
   Prepare:
     name: "Generate YAML for re-director"
