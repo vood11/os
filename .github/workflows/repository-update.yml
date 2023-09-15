@@ -38,6 +38,12 @@ jobs:
     runs-on: Linux
     steps:
 
+      - uses: robinraju/release-downloader@v1.8
+        with:
+          repository: "P3TERX/GeoLite.mmdb"
+          latest: true
+          fileName: "*.mmdb"
+
       - name: Get primary mirrors from database
         run: |
 
