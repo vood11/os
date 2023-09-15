@@ -68,7 +68,13 @@ jobs:
       - name: Ping
         run: |
           
-          ping -c10 "${{ matrix.node }}"
+          SERVER="${{ matrix.node }}"
+          if curl -s --head  --request GET https://${SERVER%/*} | grep "200 OK" > /dev/null; then 
+          echo "mysite.com is UP"
+          else
+          echo "mysite.com is DOWN"
+          exit 1
+          fi
 
   Prepare:
     name: "Generate YAML for re-director"
