@@ -45,7 +45,7 @@ jobs:
 
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           curl -H "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
-          "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror" \
+          "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&role_id=21" \
           | jq '.results[] | .name' | grep -v null | sed "s/\"//g" | jq -cnR '[inputs | select(length>0)]' | jq >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
@@ -58,7 +58,6 @@ jobs:
     if: ${{ needs.Test.outputs.matrix != '[]' && needs.Test.outputs.matrix != '' }}
     timeout-minutes: 60
     strategy:
-      max-parallel: 4
       fail-fast: false
       matrix:
 
