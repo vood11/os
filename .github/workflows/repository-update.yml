@@ -69,7 +69,7 @@ jobs:
         run: |
           
           SERVER="${{ matrix.node }}"
-          ping ${SERVER%/*}
+          ping -c15 ${SERVER%/*}
 
   Prepare:
     name: "Generate YAML for re-director"
