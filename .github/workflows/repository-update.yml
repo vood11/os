@@ -31,10 +31,49 @@ jobs:
           ORG_MEMBERS: ${{ secrets.ORG_MEMBERS }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  Test:
+    name: "Ping servers"
+    needs: Check
+    outputs:
+      matrix: ${{steps.json.outputs.JSON_CONTENT}}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Get primary mirrors from database
+        id: json
+        run: |
+
+          echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
+          curl -H "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
+          "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror" \
+          | jq '.results[] | .name' | grep -v null | sed "s/\"//g" | jq -cnR '[inputs | select(length>0)]' | jq >> $GITHUB_OUTPUT
+          echo 'EOF' >> $GITHUB_OUTPUT
+
+  Ping:
+    name: "Files"
+    runs-on: Linux
+    needs: Test
+    outputs:
+      matrix: ${{needs.Prepare.outputs.matrix}}
+    if: ${{ needs.Prepare.outputs.matrix != '[]' && needs.Prepare.outputs.matrix != '' }}
+    timeout-minutes: 60
+    strategy:
+      max-parallel: 4
+      fail-fast: false
+      matrix:
+
+        node: ${{fromJson(needs.Prepare.outputs.matrix)}}
+
+    steps:
+
+      - name: Ping
+        run: |
+          
+          echo "${{ matrix.node }}"
 
   Prepare:
     name: "Generate YAML for re-director"
-    needs: Check
+    needs: Ping
     runs-on: Linux
     steps:
 
