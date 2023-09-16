@@ -98,7 +98,7 @@ jobs:
           for variant in "${VARIANT[@]}"; do
           FILENAME="${variant%:*}"
           PORT="${variant##*:}"
-          toilet -f mono9 ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
+          toilet -f emboss ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
           cat <<- EOF >> dlrouter-${FILENAME}.yaml
           geodb: /scripts/redirect-config/GeoLite2-City.mmdb
           asndb: /scripts/redirect-config/GeoLite2-ASN.mmdb
