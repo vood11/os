@@ -97,12 +97,12 @@ jobs:
           VARIANT=(archive:8082 debs:80 debs-beta:8083 images:8081 rsync:8084 content:8100)
           for variant in "${VARIANT[@]}"; do
           FILENAME="${variant%:*}"
-          toilet -f standard -F metal ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
+          toilet -f mono9 -F metal ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
           cat <<- EOF >> dlrouter-${FILENAME}.yaml
           geodb: /scripts/redirect-config/GeoLite2-City.mmdb
           asndb: /scripts/redirect-config/GeoLite2-ASN.mmdb
           dl_map: /scripts/redirect-config/userdata.csv
-          bind: ':${variant##*:}'
+          bind: ':${FILENAME}'
           
           # Reload authorization key
           reloadKey: NLnC4QNF862QumEpt7zwVPZAEvqAz6cZ
