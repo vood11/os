@@ -99,7 +99,7 @@ jobs:
           FILENAME="${variant%:*}"
           PORT="${variant##*:}"
           echo "#" > dlrouter-${FILENAME}.yaml
-          echo "# ${FILENAME} " >> dlrouter-${FILENAME}.yaml
+          echo "# ${FILENAME}.armbian.com " >> dlrouter-${FILENAME}.yaml
           echo "#" >> dlrouter-${FILENAME}.yaml
           #toilet -f emboss ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
           cat <<- EOF >> dlrouter-${FILENAME}.yaml
