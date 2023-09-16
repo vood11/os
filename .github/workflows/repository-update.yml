@@ -130,8 +130,11 @@ jobs:
                 unset REGION LATITUDE LONGITUDE
                 COMMAND=$(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
                 "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&name=$server" | jq)
-          
-                DL_PATH=$(echo $COMMAND | jq '.results[] | .custom_fields["download_path"]' | sed "s/\"//g")
+
+                # where paths has been altered by mirror
+                DL_PATH_DEBS=$(echo $COMMAND | jq '.results[] | .custom_fields["download_path_debs"]' | sed "s/\"//g")
+                DL_PATH_IMAGES=$(echo $COMMAND | jq '.results[] | .custom_fields["download_path_images"]' | sed "s/\"//g")
+                
                 WEIGHT=$(echo $COMMAND | jq '.results[] | .custom_fields["weight"]' | head -1 | sed "s/\"//g")
                 SITE_ID=$(echo $COMMAND | jq '.results[] | .site.id' | sed "s/\"//g")
                 if [[ $SITE_ID != null ]]; then
@@ -146,7 +149,10 @@ jobs:
                 fi
           echo ""  >> dlrouter-${FILENAME}.yaml
           [[ -n $REGION ]] && echo "  # $TIME_ZONE - $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
-          [[ -n $DL_PATH ]] && DL_PATH="${FILENAME}"
+          
+          [[ -n $DL_PATH_DEBS && "${FILENAME}" == debs ]] && DL_PATH="${DL_PATH_DEBS}"
+          [[ -n $DL_PATH_IMAGES && "${FILENAME}" == images ]] && DL_PATH="${DL_PATH_IMAGES}"
+          
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${FILENAME}.yaml"
           [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${FILENAME}.yaml
           [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${FILENAME}.yaml
