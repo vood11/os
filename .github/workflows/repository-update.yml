@@ -138,10 +138,11 @@ jobs:
                   LATITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
                   LONGITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
                   PHYSICAL=$(echo $COMMAND | jq '.results[] | .physical_address' | sed "s/\"//g")
+                  TIME_ZONE=$(echo $COMMAND | jq '.results[] | .time_zone' | sed "s/\"//g")
                   UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
                 fi
                 
-          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
+          [[ -n $REGION ]] && echo "  # $REGION - $TIME_ZONE - $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
           [[ -n $DL_PATH ]] && DL_PATH="${FILENAME}"
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${FILENAME}.yaml"
           [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${FILENAME}.yaml
