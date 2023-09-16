@@ -150,7 +150,7 @@ jobs:
           echo ""  >> dlrouter-${FILENAME}.yaml
           [[ -n $REGION ]] && echo "  # $TIME_ZONE - $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
 
-
+          DL_PATH="${FILENAME}"
           [[ "${FILENAME}" == debs ]] && DL_PATH="apt"
           [[ "${FILENAME}" == images ]] && DL_PATH="dl"
           [[ "$DL_PATH_DEBS" != null && "${FILENAME}" == debs ]] && DL_PATH="${DL_PATH_DEBS}"
