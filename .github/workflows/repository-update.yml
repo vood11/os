@@ -75,14 +75,16 @@ jobs:
           ORIGIN=$(timeout 30 curl --retry 5 -s https://imola.armbian.com/dl/.control || true)
           CHECK=$(timeout 30 curl --retry 5 -s https://${SERVER_URL}/.control || true)
           if [[ "$ORIGIN" == "$CHECK" ]]; then
-          :
+
+             # change status in NetBox
+             curl -s -X PATCH \
+             -H "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" \
+             -H "Content-Type: application/json" \
+             https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/${SERVER_ID} \
+             --data '{"status" : "active" }' | jq '.'
+          
           else
           
-             echo "Error in ${SERVER_URL}" >> $GITHUB_STEP_SUMMARY
-             echo "Origin: $ORIGIN" >> $GITHUB_STEP_SUMMARY
-             echo "Check: $CHECK" >> $GITHUB_STEP_SUMMARY
-             echo "ID: ${SERVER_ID}" >> $GITHUB_STEP_SUMMARY
-
              # change status in NetBox
              curl -s -X PATCH \
              -H "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" \
