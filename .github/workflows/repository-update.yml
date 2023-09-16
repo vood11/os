@@ -136,7 +136,7 @@ jobs:
                   "https://stuff.armbian.com/netbox/api/dcim/sites/?limit=500&id=$SITE_ID" | jq)
                   REGION=$(echo $COMMAND | jq '.results[] | .region.name' | sed "s/\"//g")
                   LATITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
-                  LONGITUDE=$(echo $COMMAND | jq '.results[] | .latitude' | sed "s/\"//g")
+                  LONGITUDE=$(echo $COMMAND | jq '.results[] | .longitude' | sed "s/\"//g")
                   PHYSICAL=$(echo $COMMAND | jq '.results[] | .physical_address' | sed "s/\"//g")
                   TIME_ZONE=$(echo $COMMAND | jq '.results[] | .time_zone' | sed "s/\"//g")
                   UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
