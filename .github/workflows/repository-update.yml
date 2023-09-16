@@ -84,6 +84,13 @@ jobs:
           latest: true
           fileName: "*.mmdb"
 
+      - name: Install dependencies
+        run: |
+          if [ ! -e /usr/bin/toilet ]; then
+            sudo apt-get update
+            sudo apt-get install -y toilet
+          fi
+
       - name: Get primary mirrors from database
         run: |
 
