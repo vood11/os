@@ -89,7 +89,9 @@ jobs:
 
           VARIANT=(archive:8082 debs:80 debs-beta:8083 images:8081 rsync:8084 content:8100)
           for variant in "${VARIANT[@]}"; do
-          cat <<- EOF > dlrouter-${variant%:*}.yaml
+          FILENAME="${variant%:*}"
+          toilet -f standard -F metal ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
+          cat <<- EOF >> dlrouter-${FILENAME}.yaml
           geodb: /scripts/redirect-config/GeoLite2-City.mmdb
           asndb: /scripts/redirect-config/GeoLite2-ASN.mmdb
           dl_map: /scripts/redirect-config/userdata.csv
@@ -111,7 +113,7 @@ jobs:
           EOF
             echo "<pre># $variant" >> $GITHUB_STEP_SUMMARY
             SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
-            "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=${variant%:*}" | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
+            "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=${FILENAME}" | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
 
               for server in "${SERVERS[@]}"; do
                 unset REGION LATITUDE LONGITUDE
@@ -131,14 +133,14 @@ jobs:
                   UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
                 fi
                 
-          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${variant%:*}.yaml
-          [[ -n $DL_PATH ]] && DL_PATH="${variant%:*}"
-          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${variant%:*}.yaml"
-          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${variant%:*}.yaml
-          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${variant%:*}.yaml
-          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${variant%:*}.yaml          
+          [[ -n $REGION ]] && echo "  # $REGION $PHYSICAL $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
+          [[ -n $DL_PATH ]] && DL_PATH="${FILENAME}"
+          echo "  - server: $server/$DL_PATH/" >> "dlrouter-${FILENAME}.yaml"
+          [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${FILENAME}.yaml
+          [[ $LONGITUDE ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${FILENAME}.yaml
+          [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${FILENAME}.yaml          
             done
-            cat dlrouter-${variant%:*}.yaml >> $GITHUB_STEP_SUMMARY
+            cat dlrouter-${FILENAME}.yaml >> $GITHUB_STEP_SUMMARY
             echo "</pre>" >> $GITHUB_STEP_SUMMARY            
           done
 
