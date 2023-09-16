@@ -74,6 +74,8 @@ jobs:
           :
           else
           echo "Error in ${{ matrix.node }}" >> $GITHUB_STEP_SUMMARY
+          echo "Origin: $ORIGIN" >> $GITHUB_STEP_SUMMARY
+          echo "Check: $CHECK" >> $GITHUB_STEP_SUMMARY
           fi
           
           #SERVER="${{ matrix.node }}"
