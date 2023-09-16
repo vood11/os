@@ -87,7 +87,7 @@ jobs:
              curl -s -X PATCH \
              -H "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" \
              -H "Content-Type: application/json" \
-             https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/${SERVER_URL} \
+             https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/${SERVER_ID} \
              --data '{"status" : "failed" }' | jq '.'
           
           fi
