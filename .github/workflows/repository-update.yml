@@ -69,7 +69,7 @@ jobs:
       - name: Ping
         run: |
 
-          SERVER="${{ matrix.node }}
+          SERVER="${{ matrix.node }}"
           ORIGIN=$(timeout 30 curl --retry 5 -s https://imola.armbian.com/dl/.control || true)
           CHECK=$(timeout 30 curl --retry 5 -s https://${SERVER%/*}/.control || true)
           if [[ "$ORIGIN" == "$CHECK" ]]; then
