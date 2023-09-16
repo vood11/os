@@ -69,17 +69,19 @@ jobs:
       - name: Ping
         run: |
 
-          SERVER="${{ matrix.node }}"
+          SERVER_URL=$(echo "${{ matrix.node }}" | cut -d"|" -f1)
+          SERVER_ID=$(echo "${{ matrix.node }}" | cut -d"|" -f2)
+          
           ORIGIN=$(timeout 30 curl --retry 5 -s https://imola.armbian.com/dl/.control || true)
-          CHECK=$(timeout 30 curl --retry 5 -s https://${SERVER%/*}/.control || true)
+          CHECK=$(timeout 30 curl --retry 5 -s https://${SERVER_URL}/.control || true)
           if [[ "$ORIGIN" == "$CHECK" ]]; then
           :
           else
           
-             echo "Error in ${{ matrix.node }}" >> $GITHUB_STEP_SUMMARY
+             echo "Error in ${SERVER_URL}" >> $GITHUB_STEP_SUMMARY
              echo "Origin: $ORIGIN" >> $GITHUB_STEP_SUMMARY
              echo "Check: $CHECK" >> $GITHUB_STEP_SUMMARY
-             echo "ID: ${SERVER##*|}" >> $GITHUB_STEP_SUMMARY
+             echo "ID: ${SERVER_ID}" >> $GITHUB_STEP_SUMMARY
           
           fi
           
