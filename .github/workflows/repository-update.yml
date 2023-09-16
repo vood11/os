@@ -82,7 +82,7 @@ jobs:
              -H "Content-Type: application/json" \
              https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/${SERVER_ID} \
              --data '{"status" : "active" }' | jq '.'
-          
+            echo "Enabling $SERVER_URL" >> $GITHUB_STEP_SUMMARY
           else
           
              # change status in NetBox
@@ -91,7 +91,7 @@ jobs:
              -H "Content-Type: application/json" \
              https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/${SERVER_ID} \
              --data '{"status" : "failed" }' | jq '.'
-          
+             echo "Disabling $SERVER_URL" >> $GITHUB_STEP_SUMMARY
           fi
           
           #SERVER="${{ matrix.node }}"
