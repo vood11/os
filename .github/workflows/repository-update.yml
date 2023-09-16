@@ -46,7 +46,8 @@ jobs:
           echo 'JSON_CONTENT<<EOF' >> $GITHUB_OUTPUT
           curl -H "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
           "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&tag=images" \
-          | jq '.results[] | .name,.custom_fields["download_path_images"]' | sed "s|null|dl|" | sed "s/\"//g" | xargs -n2 -d'\n' | sed "s/ /\//g" | jq -cnR '[inputs | select(length>0)]' | jq >> $GITHUB_OUTPUT
+          | jq '.results[] | .name,.custom_fields["download_path_images"],.id' | sed "s|null|dl|" | sed "s/\"//g" \
+          | xargs -n3 -d'\n' | sed -e 's/\s\+/\//' | sed "s/ /|/" | jq -cnR '[inputs | select(length>0)]' | jq >> $GITHUB_OUTPUT
           echo 'EOF' >> $GITHUB_OUTPUT
 
   Ping:
@@ -68,8 +69,9 @@ jobs:
       - name: Ping
         run: |
 
+          SERVER="${{ matrix.node }}
           ORIGIN=$(timeout 30 curl --retry 5 -s https://imola.armbian.com/dl/.control || true)
-          CHECK=$(timeout 30 curl --retry 5 -s https://${{ matrix.node }}/.control || true)
+          CHECK=$(timeout 30 curl --retry 5 -s https://${SERVER%/*}/.control || true)
           if [[ "$ORIGIN" == "$CHECK" ]]; then
           :
           else
@@ -77,6 +79,7 @@ jobs:
              echo "Error in ${{ matrix.node }}" >> $GITHUB_STEP_SUMMARY
              echo "Origin: $ORIGIN" >> $GITHUB_STEP_SUMMARY
              echo "Check: $CHECK" >> $GITHUB_STEP_SUMMARY
+             echo "ID: ${SERVER##*|}" >> $GITHUB_STEP_SUMMARY
           
           fi
           
