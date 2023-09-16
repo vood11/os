@@ -68,14 +68,16 @@ jobs:
       - name: Ping
         run: |
 
-          ORIGIN=$(timeout 10 curl -s https://imola.armbian.com/dl/.control || true)
-          CHECK=$(timeout 10 curl -s https://${{ matrix.node }}/.control || true)
+          ORIGIN=$(timeout 30 curl --retry 5 -s https://imola.armbian.com/dl/.control || true)
+          CHECK=$(timeout 30 curl --retry 5 -s https://${{ matrix.node }}/.control || true)
           if [[ "$ORIGIN" == "$CHECK" ]]; then
           :
           else
-          echo "Error in ${{ matrix.node }}" >> $GITHUB_STEP_SUMMARY
-          echo "Origin: $ORIGIN" >> $GITHUB_STEP_SUMMARY
-          echo "Check: $CHECK" >> $GITHUB_STEP_SUMMARY
+          
+             echo "Error in ${{ matrix.node }}" >> $GITHUB_STEP_SUMMARY
+             echo "Origin: $ORIGIN" >> $GITHUB_STEP_SUMMARY
+             echo "Check: $CHECK" >> $GITHUB_STEP_SUMMARY
+          
           fi
           
           #SERVER="${{ matrix.node }}"
