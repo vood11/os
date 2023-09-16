@@ -103,7 +103,7 @@ jobs:
           geodb: /scripts/redirect-config/GeoLite2-City.mmdb
           asndb: /scripts/redirect-config/GeoLite2-ASN.mmdb
           dl_map: /scripts/redirect-config/userdata.csv
-          bind: ':${FILENAME}'
+          bind: ':${PORT}'
           
           # Reload authorization key
           reloadKey: NLnC4QNF862QumEpt7zwVPZAEvqAz6cZ
@@ -119,7 +119,7 @@ jobs:
           # optional: latitude, longitude (float)
           servers:
           EOF
-            echo "<pre># $variant" >> $GITHUB_STEP_SUMMARY
+            echo "<pre>" >> $GITHUB_STEP_SUMMARY
             SERVERS=($(curl -sH "Authorization: Token ${{ secrets.NETBOX_TOKEN }}" -H "Accept: application/json; indent=4" \
             "https://stuff.armbian.com/netbox/api/virtualization/virtual-machines/?limit=500&name__empty=false&status=active&device_role=Mirror&tag=${FILENAME}" | jq '.results[] | .name' | grep -v null | sed "s/\"//g"))
 
