@@ -149,9 +149,12 @@ jobs:
                 fi
           echo ""  >> dlrouter-${FILENAME}.yaml
           [[ -n $REGION ]] && echo "  # $TIME_ZONE - $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
-          
-          [[ "$DL_PATH_DEBS" != null && "${FILENAME}" == debs ]] && DL_PATH="${DL_PATH_DEBS}" || DL_PATH="apt"
-          [[ "$DL_PATH_IMAGES" != null && "${FILENAME}" == images ]] && DL_PATH="${DL_PATH_IMAGES}" || DL_PATH="dl"
+
+
+          [[ "${FILENAME}" == debs ]] && DL_PATH="apt"
+          [[ "${FILENAME}" == images ]] && DL_PATH="dl"
+          [[ "$DL_PATH_DEBS" != null && "${FILENAME}" == debs ]] && DL_PATH="${DL_PATH_DEBS}"
+          [[ "$DL_PATH_IMAGES" != null && "${FILENAME}" == images ]] && DL_PATH="${DL_PATH_IMAGES}"
           
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${FILENAME}.yaml"
           [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${FILENAME}.yaml
