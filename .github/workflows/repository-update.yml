@@ -152,6 +152,7 @@ jobs:
 
           DL_PATH="${FILENAME}"
           [[ "${FILENAME}" == debs ]] && DL_PATH="apt"
+          [[ "${FILENAME}" == debs-beta ]] && DL_PATH="beta"
           [[ "${FILENAME}" == images ]] && DL_PATH="dl"
           [[ "$DL_PATH_DEBS" != null && "${FILENAME}" == debs ]] && DL_PATH="${DL_PATH_DEBS}"
           [[ "$DL_PATH_IMAGES" != null && "${FILENAME}" == images ]] && DL_PATH="${DL_PATH_IMAGES}"
