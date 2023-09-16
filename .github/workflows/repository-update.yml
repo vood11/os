@@ -98,7 +98,10 @@ jobs:
           for variant in "${VARIANT[@]}"; do
           FILENAME="${variant%:*}"
           PORT="${variant##*:}"
-          toilet -f emboss ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
+          echo "#" > dlrouter-${FILENAME}.yaml
+          echo "# ${FILENAME} " >> dlrouter-${FILENAME}.yaml
+          echo "#" >> dlrouter-${FILENAME}.yaml
+          #toilet -f emboss ${FILENAME} | sed 's/^/# /' > dlrouter-${FILENAME}.yaml
           cat <<- EOF >> dlrouter-${FILENAME}.yaml
           geodb: /scripts/redirect-config/GeoLite2-City.mmdb
           asndb: /scripts/redirect-config/GeoLite2-ASN.mmdb
@@ -142,7 +145,7 @@ jobs:
                   UPLOAD=$(echo $COMMAND | jq '.results[] | .custom_fields["upload_speed"]' | sed "s/\"//g")
                 fi
                 
-          [[ -n $REGION ]] && echo "  # $REGION - $TIME_ZONE - $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
+          [[ -n $REGION ]] && echo "  # $TIME_ZONE - $UPLOAD Mbit/s" >> dlrouter-${FILENAME}.yaml
           [[ -n $DL_PATH ]] && DL_PATH="${FILENAME}"
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${FILENAME}.yaml"
           [[ $LATITUDE ]] && echo "    latitude: $LATITUDE" >> dlrouter-${FILENAME}.yaml
