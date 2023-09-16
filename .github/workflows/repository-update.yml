@@ -159,8 +159,8 @@ jobs:
           [[ "$DL_PATH_IMAGES" != null && "${FILENAME}" == images ]] && DL_PATH="${DL_PATH_IMAGES}"
           
           echo "  - server: $server/$DL_PATH/" >> "dlrouter-${FILENAME}.yaml"
-          [[ "$LATITUDE" != null ]] && echo "    latitude: $LATITUDE" >> dlrouter-${FILENAME}.yaml
-          [[ "$LONGITUDE" != null ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${FILENAME}.yaml
+          [[ "$LATITUDE" != null && -n "$LATITUDE" ]] && echo "    latitude: $LATITUDE" >> dlrouter-${FILENAME}.yaml
+          [[ "$LONGITUDE" != null && -n "$LONGITUDE" ]] && echo "    longitude: $LONGITUDE" >> dlrouter-${FILENAME}.yaml
           [[ "$WEIGHT" != null ]] && echo "    weight: $WEIGHT" >> dlrouter-${FILENAME}.yaml          
             done
             cat dlrouter-${FILENAME}.yaml >> $GITHUB_STEP_SUMMARY
