@@ -68,8 +68,8 @@ jobs:
       - name: Ping
         run: |
 
-          ORIGIN=$(timeout 10 curl https://imola.armbian.com/dl/.control || true)
-          CHECK=$(timeout 10 curl ${{ matrix.node }}/.control || true)
+          ORIGIN=$(timeout 10 curl -s https://imola.armbian.com/dl/.control || true)
+          CHECK=$(timeout 10 curl -s https://${{ matrix.node }}/.control || true)
           if [[ "$ORIGIN" == "$CHECK" ]]; then
           :
           else
