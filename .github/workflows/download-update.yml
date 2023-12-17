@@ -87,8 +87,8 @@ jobs:
               
               echo "/storage/www/incoming/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/incoming/"
               
-              if [[ "$target" == "images" ]]; then rsync -ar --dry-run --size-only --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/incoming/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/incoming/ ; fi
-              if [[ "$target" == "images" ]]; then rsync -ar --dry-run --size-only --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/dl/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/dl/ ; fi
+              if [[ "$target" == "images" ]]; then rsync -rvP --dry-run --size-only --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/incoming/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/incoming/ ; fi
+              if [[ "$target" == "images" ]]; then rsync -rvP --dry-run --size-only --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/dl/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/dl/ ; fi
           done
 
   Index:
