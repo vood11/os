@@ -1,9 +1,9 @@
 name: Download update (admin)
 on:
-  schedule:
-   - cron: '0 */4 * * *'
-  repository_dispatch:
-    types: ["Repository update"]
+  #schedule:
+  # - cron: '0 */4 * * *'
+  #repository_dispatch:
+  #  types: ["Repository update"]
   workflow_dispatch:
     inputs:
       PURGE:
@@ -83,7 +83,7 @@ jobs:
           SERVER_USERNAME=$(echo $JSON | jq '.results[] | .custom_fields["username"]' | sed "s/\"//g")
           TARGETS=($(echo $JSON | jq '.results[] | .tags' | jq '.[].name' | grep -v null | grep -v Push | sed "s/\"//g"))
           for target in "${TARGETS[@]}"; do
-              if [[ "$target" == "images" ]]; then rsync -ar --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/incoming/ ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/dl ; fi
+              if [[ "$target" == "images" ]]; then rsync -ar --dry-run --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/incoming/ ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/incoming ; fi
           done
 
   Index:
@@ -94,34 +94,7 @@ jobs:
 
       - name: Cleaning
         run: |
-          [[ "${{ inputs.PURGE }}" == yes ]] && rm -rf /storage/incoming/* || true
+
+          du /storage/www/incoming
+          #[[ "${{ inputs.PURGE }}" == yes ]] && rm -rf /storage/incoming/* || true
           
-  dispatch:
-    name: "Refresh web and redirector index"
-    if: ${{ github.repository_owner == 'Armbian' }}
-    needs: Index
-    runs-on: [Linux, X64]
-    steps:
-
-      - name: "Run webindex update action"
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.DISPATCH }}
-          repository: armbian/os
-          event-type: "Webindex update"
-
-      - name: "Run redirector update action"
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.DISPATCH }}
-          repository: armbian/os
-          event-type: "Redirector update"
-
-#
-#      - name: Repository Dispatch
-#        uses: peter-evans/repository-dispatch@v2
-#        with:
-#          token: ${{ secrets.DISPATCH }}
-#          repository: 'armbian/os'
-#          event-type: "Smoke tests"
-#          client-payload: '{"powermanagement": true}'
