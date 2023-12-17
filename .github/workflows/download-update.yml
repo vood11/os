@@ -85,6 +85,7 @@ jobs:
           for target in "${TARGETS[@]}"; do
               ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${{ matrix.node }}"
               if [[ "$target" == "images" ]]; then rsync -ar --dry-run --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/incoming/ ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/incoming ; fi
+              if [[ "$target" == "images" ]]; then rsync -ar --dry-run --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/dl/ ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/dl ; fi
           done
 
   Index:
