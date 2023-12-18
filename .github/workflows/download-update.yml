@@ -12,6 +12,12 @@ on:
         options: [ 'yes', 'no' ]
         type: choice
         default: 'no'
+      MOVE:
+        description: 'yes = move to primary download'
+        required: false
+        options: [ 'yes', 'no' ]
+        type: choice
+        default: 'no'
 
 concurrency:
   group: download
@@ -83,16 +89,19 @@ jobs:
           SERVER_USERNAME=$(echo $JSON | jq '.results[] | .custom_fields["username"]' | sed "s/\"//g")
           TARGETS=($(echo $JSON | jq '.results[] | .tags' | jq '.[].name' | grep -v null | grep -v Push | sed "s/\"//g"))
           for target in "${TARGETS[@]}"; do
-              ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${{ matrix.node }}"
-              
-              echo "/storage/www/incoming/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/incoming/"
-              
+              ssh-keygen -f "${HOME}/.ssh/known_hosts" -R "${{ matrix.node }}" # to do. read from db
               if [[ "$target" == "images" ]]; then rsync -avzhe --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/incoming/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/incoming/ ; fi
               if [[ "$target" == "images" ]]; then rsync -avzhe --progress -e "ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new" /storage/www/dl/. ${SERVER_USERNAME}@${{ matrix.node }}:${SERVER_PATH}/dl/ ; fi
-          done
 
+              # Move too
+              if [[ "${{ inputs.MOVE }}" == yes ]]; then
+                echo "Moving"
+                ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new ${SERVER_USERNAME}@${SERVER_URL} "rsync --dry-run --remove-source-files --progress -rv ${SERVER_PATH}/incoming/. ${SERVER_PATH}/dl"
+              fi
+          done
+          
   Index:
-    name: "Purge"
+    name: "Index"
     runs-on: rsync
     needs: Sync
     steps:
