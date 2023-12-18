@@ -98,7 +98,7 @@ jobs:
               # Move too
               if [[ "${{ inputs.MOVE }}" == yes && "$target" == "images" ]]; then
                 echo "Moving"
-                ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new ${SERVER_USERNAME}@${{ matrix.node }} "rsync --progress -avhe ${SERVER_PATH}/incoming/. ${SERVER_PATH}/dl"
+                ssh -p ${SERVER_PORT} -o StrictHostKeyChecking=accept-new ${SERVER_USERNAME}@${{ matrix.node }} "rsync --progress -avr ${SERVER_PATH}/incoming/. ${SERVER_PATH}/dl"
               fi
               
           done
